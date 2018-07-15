@@ -2,6 +2,7 @@ const gulp = require('gulp');
 const connect = require('gulp-connect');
 const clean = require('gulp-clean');
 const concat = require('gulp-concat');
+const order = require('gulp-order');
 
 const pathTo = {
   root: './',
@@ -34,9 +35,15 @@ gulp.task('css', () =>
 
 gulp.task('js', () => 
   gulp.src(pathTo.js)
-  .pipe(concat('app.js'))
-  .pipe(gulp.dest(pathTo.dist))
-  .pipe(connect.reload())
+    .pipe(order([
+      'src/constants.js',
+      'src/view.js',
+      'src/snake.js',
+      'src/index.js'
+    ]))
+    .pipe(concat('app.js'))
+    .pipe(gulp.dest(pathTo.dist))
+    .pipe(connect.reload())
 );
 
 gulp.task('watch', () => {
@@ -46,7 +53,7 @@ gulp.task('watch', () => {
 });
 
 gulp.task('clean', () =>
-  gulp.clean(pathTo.dist, {read: false})
+  gulp.src(pathTo.dist, {read: false})
     .pipe(clean())
 );
 
